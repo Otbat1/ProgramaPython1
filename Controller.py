@@ -4,7 +4,9 @@ from os.path import dirname, realpath, join
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QTableWidget, QTableWidgetItem
 from PyQt5.uic import loadUiType
 import pandas as pd
-
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
+from nltk.corpus import stopwords
 
 scriptDir = dirname(realpath(__file__))
 From_Main, _ = loadUiType(join(dirname(__file__), "Main.ui"))
@@ -25,7 +27,9 @@ class MainWindow(QWidget, From_Main):
         self.BtnGenerar.clicked.connect(self.DatosColumnas)
         self.BtnPClave.clicked.connect(self.trabajarPalabras)
         self.BtnGuardar.clicked.connect(self.guardarArchivoFiltrado)
-        
+        self.BtnWordCloud.clicked.connect(self.WordCloud)
+
+
     def AbrirArchivo(self):
         global path
         try:
@@ -38,7 +42,7 @@ class MainWindow(QWidget, From_Main):
 
     def getPalabras(self):
         pass
-    
+
     def trabajarPalabras(self):
         global palabras
         palabras = self.FiltrarPalabra.text().split()
@@ -48,7 +52,7 @@ class MainWindow(QWidget, From_Main):
         for i in palabras:
             count = count + 1
             if count < len(palabras):
-                palabrasString.append( i +"|")
+                palabrasString.append(i + "|")
             else:
                 palabrasString.append(i)
 
@@ -57,11 +61,11 @@ class MainWindow(QWidget, From_Main):
         listaPalabras = "".join(palabrasString)
         print(listaPalabras)
         self.FiltrarPalabra.setText("")
-        return listaPalabras 
+        return listaPalabras
 
     def guardarArchivoFiltrado(self):
-        palabrasfiltradas = df[df['Texto'].str.contains(listaPalabras, case=False, na=False, regex=True)]
-        #palabrasfiltradas.to_csv("C:/Users/USER/Downloads/PalabraClave.csv")
+        palabrasfiltradas = df[df['Texto'].str.contains(
+            listaPalabras, case=False, na=False, regex=True)]
         palabrasfiltradas.to_csv(os.path.abspath("PalabraClave.csv"))
 
     def DatosColumnas(self):
@@ -82,6 +86,30 @@ class MainWindow(QWidget, From_Main):
         self.tableWidget.resizeColumnsToContents()
         self.tableWidget.resizeRowsToContents()
 
+    def WordCloud(self):
+        info = ""
+        frases = df["Texto"]
+        frasesArreglo = []
+
+        for i in frases:
+            frasesArreglo.append(i)
+        info = "".join(frasesArreglo)
+        #print(info)
+
+        #generar stopwords
+        stop_wordsunicos = ['Ã', 'Â', 'ð','ðŸ', 'Ÿ', '€','@', '¢' ,'https', 'âœ' 'âœˆï','ˆ','Ÿ','â','œ','ï', 'estÃ','dÃ','mÃ', 'ä', 'https://t.co/', 't', 'co', 'í', 'n' ]
+        stop_words = stopwords.words('spanish')
+        stop_words.extend(stop_wordsunicos)
+        #gererar nube
+        wordCloud = WordCloud(stopwords = stop_words, max_words=10000).generate(info)
+        wordCloud.to_file("C:/Users/leona/Downloads/palabrasfiltradas.png")
+        
+
+    """
+        image = wordCloud.to_image()
+        image.save("wordcloud.png")
+        image.show
+    """
 
 app = QApplication(sys.argv)
 sheet = MainWindow()
