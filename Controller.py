@@ -11,6 +11,8 @@ From_Main, _ = loadUiType(join(dirname(__file__), "Main.ui"))
 
 
 class MainWindow(QWidget, From_Main):
+    df = []
+    path = ""
     palabras = []
     listaPalabras = ""
 
@@ -21,13 +23,16 @@ class MainWindow(QWidget, From_Main):
 
         self.ButtonAbrir.clicked.connect(self.AbrirArchivo)
         self.BtnGenerar.clicked.connect(self.DatosColumnas)
-
+        self.BtnPClave.clicked.connect(self.trabajarPalabras)
+        self.BtnGuardar.clicked.connect(self.guardarArchivoFiltrado)
+        
     def AbrirArchivo(self):
         global path
         try:
             path = QFileDialog.getOpenFileName(
                 self, 'Abrir archivo', os.getenv('HOME'), 'CSV(*.csv)')[0]
-            self.all_data = pd.read_csv(path)
+            global df
+            df = self.all_data = pd.read_csv(path)
         except:
             print(path)
 
@@ -36,7 +41,7 @@ class MainWindow(QWidget, From_Main):
     
     def trabajarPalabras(self):
         global palabras
-        palabras = self.ui.FiltrarPalabra.text().split()
+        palabras = self.FiltrarPalabra.text().split()
         count = 0
         palabrasString = []
 
@@ -51,14 +56,14 @@ class MainWindow(QWidget, From_Main):
         global listaPalabras
         listaPalabras = "".join(palabrasString)
         print(listaPalabras)
-        self.ui.FiltrarPalabra.setText("")
+        self.FiltrarPalabra.setText("")
         return listaPalabras 
-    
+
     def guardarArchivoFiltrado(self):
-        palabrasfiltradas = path[path['Texto'].str.contains(listaPalabras, case=False, na=False, regex=True)]
+        palabrasfiltradas = df[df['Texto'].str.contains(listaPalabras, case=False, na=False, regex=True)]
         #palabrasfiltradas.to_csv("C:/Users/USER/Downloads/PalabraClave.csv")
         palabrasfiltradas.to_csv(os.path.abspath("PalabraClave.csv"))
-            
+
     def DatosColumnas(self):
         numColomn = self.spinBox.value()
         if numColomn == 0:
