@@ -12,19 +12,19 @@ from model.neuronalNetwork import NeuralNetwork
 
 scriptDir = dirname(realpath(__file__))
 
-class MainWindow():
+class main_Controller():
     df = []
     path = ""
     palabras = []
     listaPalabras = ""
     info = ""
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super(main_Controller, self).__init__()
         QWidget.__init__(self)
         self.setupUi(self)
         
         self.question = [0 for i in range(0, 8)]
-        
+        """ 
         self.ButtonAbrir.clicked.connect(self.AbrirArchivo)
         self.BtnGenerar.clicked.connect(self.DatosColumnas)
         self.BtnPClave.clicked.connect(self.filtroPalabras)
@@ -33,8 +33,7 @@ class MainWindow():
         
         self.BtnEntrenar.clicked.connect(self.train)
         self.BtnEnviar.clicked.connect(self.send)
-
-
+        """
         # llamado de los Checked al metodo OnStateChanged 
         self.checkBoxAmigos.stateChanged.connect(self.onStateChanged)
         self.checkBoxFamilia.stateChanged.connect(self.onStateChanged)

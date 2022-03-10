@@ -1,19 +1,27 @@
 import sys
-from view.vista_main_ui import Ui_MainWindow
 
-from PyQt5 import QtCore,QtGui,QtWidgets
+from view import Ui_Form
+from controller.Controller import MainWindow
+from view.Main import Ui_Form
 from PyQt5.QtWidgets import *
+from PyQt5 import QtCore,QtGui,QtWidgets
 
-class MainWin(QMainWindow): 
-    
+class MainWindow(QWidget,Ui_Form):
     def __init__(self):
-        QMainWindow.__init__(self)
-        self.Mainwindow = Ui_MainWindow()
-        self.Mainwindow.setupUi(self)
+        super().__init__()
+        self.view = Ui_Form()
+        self.view.setupUi(self)   
+    
+    def conexiones(self):
         
-        self.show()
+        self.view.ButtonAbrir.clicked.connect(self.ButtonAbrir())
+        self.view.BtnGenerar.clicked.connect(self.DatosColumnas())
+        self.view.BtnPClave.clicked.connect(self.filtroPalabras())
+        self.view.BtnGuardar.clicked.connect(self.guardarArchivoFiltrado)
+        self.view.BtnWordCloud.clicked.connect(self.WordCloud)
 
-if __name__ =="__main__":    
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainWin()
-    sys.exit(app.exec_())
+    window = MainWindow()
+    window.show()
+    app.exec_()
